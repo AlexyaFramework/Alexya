@@ -33,9 +33,6 @@ use \Closure;
  *  * A string being the name to reference the bindnig.
  *  * A closure that will be executed for instancing the object.
  *
- * The difference between both methods (a part that one executes the closure just once) is that
- * the closure sent to `register` can contain parameters but `registerSingleton` can't.
- *
  * Once the binding has been registered you can retrieve it using the method `get`:
  *
  *     $user     = Container::get("User", ["test", "test"]);
@@ -46,8 +43,7 @@ use \Closure;
  *     $user = Container::User("test", "test");
  *
  * The parameter it accepts is the string sent to the `register` or `registerSingleton` method
- * to identify the binding. If the binding was register with `register` you can send an array containing
- * the parameters that will be sent to the closure.
+ * to identify the binding. You can send an array containing the parameters that will be sent to the closure.
  *
  * To check if a specific binding has been registered use the method `isRegistered` the same
  * way as the `get` method. It will return `true` if the binding is registered or `false` if not.
@@ -97,20 +93,27 @@ class Container
      */
     public static function register(string $name, Closure $closure)
     {
-        self::$_bindings[$name] = $closure;
+        self::$_bindings[$name] = [
+            "type"    => "multiton",
+            "closure" => $closure
+        ];
     }
 
     /**
      * Registers a singleton binding.
      *
-     * The closure will be executed here so there's only one instance of the binding.
+     * The closure will be executed just once so there's only one instance of the binding.
      *
      * @param string  $name    Binding's name.
      * @param Closure $closure Closure to execute to instance the binding.
      */
     public static function registerSingleton(string $name, Closure $closure)
     {
-        self::$_bindings[$name] = $closure();
+        self::$_bindings[$name] = [
+            "type"       => "singleton",
+            "closure"    => $closure,
+            "isExecuted" => false
+        ];
     }
 
     /**
@@ -127,12 +130,24 @@ class Container
             return null;
         }
 
-        $ret = self::$_bindings[$name];
-        if($ret instanceof Closure) {
-            $ret = $ret(... $args);
+        $binding = self::$_bindings[$name];
+
+        if($binding["type"] != "singleton") {
+            return $binding["closure"](... $args);
         }
 
-        return $ret;
+        if($binding["isExecuted"]) {
+            $binding = $binding["closure"];
+        } else {
+            $binding["isExecuted"] = true;
+            $binding["closure"]    = $binding["closure"](... $args);
+
+            self::$_bindings[$name] = $binding;
+
+            $binding = $binding["closure"];
+        }
+
+        return $binding;
     }
 
     /**
