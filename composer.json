@@ -16,6 +16,7 @@
 	],
 	"require": {
 		"php": ">=7.0",
+        "alexya-framework/exception": ">=3.0",
         "alexya-framework/file-system": ">=3.0",
         "alexya-framework/logger": ">=3.0",
         "alexya-framework/router": ">=3.0"
