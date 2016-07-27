@@ -27,6 +27,7 @@ require_once("config/paths.php");
     $settings = new \Alexya\Settings([
         "alexya"      => require_once(ROOT_DIR."config".DS."alexya.php"),
         "application" => require_once(ROOT_DIR."config".DS."application.php")
+        "database"    => require_once(ROOT_DIR."config".DS."database.php");
     ]);
 
     return $settings;
@@ -51,7 +52,7 @@ if(class_exists("\Alexya\Database\Connection")) {
     \Alexya\Container::registerSingleton("Database", function() {
         $settings = \Alexya\Container::get("Settings");
 
-        $database = new \Alexya\Database\Connection($settings->get("alexya.database"));
+        $database = new \Alexya\Database\Connection($settings->get("database"));
 
         return $database;
     });
