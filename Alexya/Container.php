@@ -153,6 +153,10 @@ class Container
     /**
      * Alternative syntax to `Container::get($name)`.
      *
+     * Example:
+     *
+     *     Container::Router(); // Same as `Container::get("Router")`
+     *
      * @param string $name Binding's name.
      * @param array  $args Arguments sent to the binding.
      *
