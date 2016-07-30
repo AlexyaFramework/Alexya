@@ -34,9 +34,32 @@ require_once("config/paths.php");
 });
 
 \Alexya\Container::registerSingleton("Logger", function() {
-    $settings = \Alexya\Container::get("Settings");
+    $settings = \Alexya\Container::get("Settings")->get("alexya.logger");
 
-    $logger = new \Alexya\Logger($settings->get("alexya.logger"));
+    if(!$settings["enabled"]) {
+        return;
+    }
+
+    if($settings["type"] == "database") {
+        $database = \Alexya\Container::get("Database");
+
+        $logger = new \Alexya\Logger\Database(
+            $database,
+            $settings["database"]["table"],
+            $settings["database"]["columns"],
+            $settings["database"]["log_format"],
+            $settings["log_levels"]
+        );
+    } else {
+        $directory = new \Alexya\FileSystem\Directory($settings["directory"]);
+
+        $logger = new \Alexya\Logger\File(
+            $directory,
+            $settings["file"]["file_name"],
+            $settings["file"]["log_format"],
+            $settings["log_levels"]
+        );
+    }
 
     return $logger;
 });
