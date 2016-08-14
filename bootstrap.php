@@ -11,11 +11,6 @@
  */
 
 /**
- * Load composer's autoloader
- */
-require_once("vendor/autoload.php");
-
-/**
  * Load path constants
  */
 require_once("config/paths.php");

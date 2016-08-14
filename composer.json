@@ -33,6 +33,9 @@
 		"psr-4": {
             "Alexya\\": "Alexya",
             "Application\\": "Application"
-        }
+        },
+        "files": [
+            "bootstrap.php"
+        ]
 	}
 }
