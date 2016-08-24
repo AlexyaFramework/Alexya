@@ -60,7 +60,18 @@ require_once("config/paths.php");
 });
 
 \Alexya\Container::registerSingleton("Router", function() {
-    $router = new \Alexya\Router\Router(require_once(ROOT_DIR."config".DS."routes.php"));
+    $routes = require_once(ROOT_DIR."config".DS."routes.php");
+    $router = new \Alexya\Router\Router();
+
+    foreach($routes as $key => $value) {
+        $method = null;
+        if(is_array($value)) {
+            $method = $value["method"];
+            $value  = $value["route"];
+        }
+
+        $router->add($key, $value, $method);
+    }
 
     return $router;
 });

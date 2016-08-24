@@ -17,10 +17,11 @@
 	"require": {
 		"php": ">=7.0",
         "alexya-framework/exception": ">=3.0",
-        "alexya-framework/file-system": ">=3.0",
+        "alexya-framework/filesystem": ">=3.0",
         "alexya-framework/http": ">=3.0",
         "alexya-framework/logger": ">=3.0",
-        "alexya-framework/router": ">=3.0"
+        "alexya-framework/router": ">=3.0",
+        "alexya-framework/tools": ">=3.0"
     },
     "suggest": {
         "alexya-framework/database": "Required to use the Database components such a QueryBuilder and ORM",
