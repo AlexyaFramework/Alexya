@@ -1,47 +1,64 @@
 <?php
 /**
- * Alexya framework - The intelligent Loli Framework
+ * Alexya framework - The intelligent Loli Framework.
  *
  * This file creates the configuration array and loads
  * all configuration files needed.
  *
  * All of this settings can be overridden once bootstrapping has finished
- * by using the class [\Alexya\Settings](../Alexya/Settings.php)
+ * by using the class `\Alexya\Settings`.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
 
 return [
     /**
-     * Default locale
+     * Default locale.
      *
-     * @see \Alexya\Locale\Text For a full list of locale
+     * @see \Alexya\Localization\Transaltor For a full list of locale.
      */
     "locale"  => "en_US",
 
     /**
-     * Logging settings
+     * View settings.
      */
-    "logging" => [
+    "view" => [
         /**
-         * Whether logging is enabled or not
+         * Default parser.
+         */
+        "default" => "php",
+
+        /**
+         * Available parsers.
+         *
+         * The key of the index is the extension associated to the
+         * parser and the value is the name of the parser class.
+         */
+        "parsers" => [
+            "php"  => "\\Alexya\\Foundation\\View\\DefaultParser",
+            "html" => "\\Alexya\\Foundation\\View\\HtmlParser",
+            "tpl"  => "\\Alexya\\Foundation\\View\\SmartyParser",
+        ]
+    ],
+
+    /**
+     * Logger's settings.
+     */
+    "logger" => [
+        /**
+         * Whether logging is enabled or not.
          */
         "enabled" => true,
 
         /**
-         * Where to log (database or file)
+         * Where to log (database or file).
          */
         "type" => "file",
 
         /**
-         * Log directory
+         * Log levels that should log.
          */
-        "directory" => ROOT_DIR."logs".DS,
-
-        /**
-         * Log levels that should log
-         */
-        "levels" => [
+        "log_levels" => [
            "emergency" => true,
            "alert"     => true,
            "critical"  => true,
@@ -50,7 +67,47 @@ return [
            "notice"    => true,
            "info"      => true,
            "debug"     => true
-        ]
+       ],
+
+       /**
+        * File logger settings.
+        */
+       "file" => [
+           /**
+            * Log file format.
+            */
+           "file_name" => "{YEAR}-{MONTH}-{DAY}.log",
+
+           /**
+            * Log message format.
+            */
+           "log_format" => "[{HOUR}:{MINUTE}] ({LEVEL}) {LOG}",
+
+           /**
+            * Log directory.
+            */
+           "directory" => ROOT_DIR."logs".DS
+       ],
+
+       /**
+        * Database logger settings.
+        */
+       "database" => [
+           /**
+            * Table name.
+            */
+           "table" => "logs",
+
+           /**
+            * Table columns.
+            */
+           "colums" =>  [
+               "date"    => "{YEAR}-{MONTH}-{DAY} {HOUR}:{MINUTE}:{SECOND}",
+               "caller"  => "{CALLER_CLASS}{CALLER_TYPE}{CALLER_FUNCTION} ({CALLER_FILE}:{CALLER_LINE})",
+               "level"   => "{LEVEL}",
+               "message" => "{LOG}"
+           ]
+       ]
     ],
 
     /**

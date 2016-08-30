@@ -17,9 +17,10 @@
  */
 
 /**
- * Boostrap Alexya
+ * Load composer.
  */
-require_once("bootstrap.php");
+if(!require_once("vendor/autoload.php")) {
+    die("Please, execute `composer update` in order to install dependencies");
+}
 
-
-\Alexya\Container::get("Router")->route();
+\Alexya\Container::Router()->route();

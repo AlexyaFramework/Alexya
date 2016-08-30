@@ -21,32 +21,31 @@ require_once("config/paths.php");
 \Alexya\Container::registerSingleton("Settings", function() {
     $settings = new \Alexya\Settings([
         "alexya"      => require_once(ROOT_DIR."config".DS."alexya.php"),
-        "application" => require_once(ROOT_DIR."config".DS."application.php")
-        "database"    => require_once(ROOT_DIR."config".DS."database.php");
+        "application" => require_once(ROOT_DIR."config".DS."application.php"),
+        "database"    => require_once(ROOT_DIR."config".DS."database.php")
     ]);
 
     return $settings;
 });
 
 \Alexya\Container::registerSingleton("Logger", function() {
-    $settings = \Alexya\Container::get("Settings")->get("alexya.logger");
+    $settings = \Alexya\Container::Settings()->get("alexya.logger");
 
     if(!$settings["enabled"]) {
         return;
     }
 
     if($settings["type"] == "database") {
-        $database = \Alexya\Container::get("Database");
+        $database = \Alexya\Container::Database;
 
         $logger = new \Alexya\Logger\Database(
             $database,
             $settings["database"]["table"],
             $settings["database"]["columns"],
-            $settings["database"]["log_format"],
             $settings["log_levels"]
         );
     } else {
-        $directory = new \Alexya\FileSystem\Directory($settings["directory"]);
+        $directory = \Alexya\FileSystem\Directory::make($settings["file"]["directory"], \Alexya\FileSystem\Directory::MAKE_DIRECTORY_EXISTS_OPEN);
 
         $logger = new \Alexya\Logger\File(
             $directory,
@@ -77,11 +76,11 @@ require_once("config/paths.php");
 });
 
 // User might not have included the Database components, so just register its binding in case it's included
-if(class_exists("\Alexya\Database\Connection")) {
+if(class_exists("\Alexya\Database\Connection") && \Alexya\Container::Settings()->get("database.enabled")) {
     \Alexya\Container::registerSingleton("Database", function() {
-        $settings = \Alexya\Container::get("Settings");
+        $settings = \Alexya\Container::Settings()->get("database");
 
-        $database = new \Alexya\Database\Connection($settings->get("database"));
+        $database = new \Alexya\Database\Connection($settings["host"], $settings["port"], $settings["username"], $settings["password"], $settings["database"]);
 
         return $database;
     });
@@ -131,7 +130,7 @@ if(class_exists("\Alexya\Locale\Localization")) {
 }
 
 // Initialize classes
-\Alexya\Exception\Handler::init();
-\Alexya\Container::get("Router")->init();
+//\Alexya\Exception\Handler::init();
+//\Alexya\Container::get("Router")->init();
 
-\Alexya\Container::get("Logger")->debug("Alexya is bootstrapped!");
+\Alexya\Container::Logger()->debug("Alexya is bootstrapped!");

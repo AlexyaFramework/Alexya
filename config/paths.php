@@ -43,26 +43,6 @@ define("VIEWS_DIR", APPLICATION_DIR."Views".DS);
 define("CONTROLLERS_DIR", APPLICATION_DIR."Controllers".DS);
 
 /**
- * Routes dir
- */
-define("ROUTES_DIR", APPLICATION_DIR."Routes".DS);
-
-/**
- * Locales dir
- */
-define("LOCALES_DIR", APPLICATION_DIR."Locales".DS);
-
-/**
- * 3rd part libraries dir
- */
-define("LIB_DIR", ROOT_DIR."lib".DS);
-
-/**
- * Packages dir
- */
-define("PACKAGES_DIR", ROOT_DIR."packages".DS);
-
-/**
  * Translations dir
  */
 define("TRANSLATIONS_DIR", ROOT_DIR."translations".DS);
