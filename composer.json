@@ -1,0 +1,41 @@
+{
+    "name": "alexya-framework/alexya",
+    "type": "framework",
+    "description": "The intelligent Loli Framework",
+    "keywords": ["php", "framework", "mvc", "mvvm", "hmvc", "hmvvmc", "orm", "intelligent", "php7", "alexya"],
+    "license": "GNU",
+    "support": {
+        "issues": "https://github.com/AlexyaFramework/Alexya/issues",
+        "source": "https://github.com/AlexyaFramework/Alexya"
+    },
+    "authors": [
+        {
+            "name": "Manulaiko",
+            "email": "manulaiko@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "alexya-framework/filesystem": ">=3.0",
+        "alexya-framework/http": ">=3.0",
+        "alexya-framework/logger": ">=3.0",
+        "alexya-framework/router": ">=3.0",
+        "alexya-framework/tools": ">=3.0"
+    },
+    "suggest": {
+        "alexya-framework/database": "Required to use the Database components such a QueryBuilder and ORM",
+        "alexya-framework/localization": "Required to use Localization components for text translation and date/number formatting",
+        "alexya-framework/sockswork": "Required to use SocksWork components for connecting to a socket server",
+        "alexya-framework/validator": "Required for input validation",
+        "smarty/smarty": "Required for parsing Smarty templates"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alexya\\": "Alexya",
+            "Application\\": "Application"
+        },
+        "files": [
+            "bootstrap.php"
+        ]
+    }
+}
