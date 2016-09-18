@@ -84,49 +84,79 @@ if(class_exists("\Alexya\Database\Connection") && \Alexya\Container::Settings()-
 
         return $database;
     });
+    // Initialize ORM model
+    \Alexya\Database\ORM\Model::initialize(\Alexya\Container::Database(), \Alexya\Container::Settings()->get("database.namespace"));
 }
 
 // Same goes for SocksWork
-if(class_exists("\Alexya\SocksWork\Connection")) {
-    \Alexya\Container::register("SocksWork", function() {
-        $settings = \Alexya\Container::get("Settings");
+if(class_exists("\Alexya\SocksWork\Connection") && \Alexya\Container::Settings()->get("alexya.sockswork.enabled")) {
+    \Alexya\Container::registerSingleton("SocksWork", function() {
+        $settings = \Alexya\Container::Settings()->get("alexya.sockswork");
 
-        $sockswork = new \Alexya\SocksWork\Connection($settings->get("alexya.sockswork"));
+        $sockswork = new \Alexya\SocksWork\Connection($settings["host"], $settings["port"], $settings["timeout"]);
 
         return $sockswork;
     });
+}
+
+// And for Session
+if(class_exists("\Alexya\Tools\Session\Session") && \Alexya\Container::Settings()->get("alexya.session.enabled")) {
+    \Alexya\Container::registerSingleton("Session", function() {
+        $settings = \Alexya\Container::Settings()->get("alexya.session");
+
+        $session = new \Alexya\Tools\Session\Session($settings["name"], $settings["lifetime"], $settings["path"]);
+
+        return $session;
+    });
+    \Alexya\Tools\Session\Results::initialize(\Alexya\Container::Session());
 }
 ///////////////////////////////////////
 // End Register container's bindings //
 ///////////////////////////////////////
 
-if(class_exists("\Alexya\Locale\Localization")) {
+if(class_exists("\Alexya\Localization\Translator")) {
+
+    // Register translator on container
+    \Alexya\Container::registerSingleton("Translator", function() {
+        $translations = [];
+        $directory    = \Alexya\FileSystem\Directory::make(TRANSLATIONS_DIR, \Alexya\FileSystem\Directory::MAKE_DIRECTORY_EXISTS_OPEN);
+
+        // All files from the `translations` directory are suposed to be PHP scripts
+        // that returns an array with the translations, the name of each file is
+        // is the language name used by the translator.
+        foreach($directory->getFiles() as $file) {
+            $translations[$file->getName()] = require($file->getPath());
+        }
+
+        return new \Alexya\Localization\Translator($translations, \Alexya\Container::Settings()->get("alexya.locale"));
+    });
+
     ////////////////////////
     // Function shortcuts //
     ////////////////////////
     /**
-     * @see \Alexya\Locale\Localization::translate
+     * @see \Alexya\Locale\Translator::translate
      */
     function t()
     {
-        return \Alexya\Locale\Localization::translate(...func_get_args());
+        return \Alexya\Container::Translator()->translate(... func_get_args());
     }
 
-    /**
-     * @see \Alexya\Locale\Localization::formatNumber
-     */
-    function fNumber()
-    {
-        return \Alexya\Locale\Localization::formatNumber(...func_get_args());
-    }
-
-    /**
-     * @see \Alexya\Locale\Localization::formatDate
-     */
-    function fDate()
-    {
-        return \Alexya\Locale\Localization::formatDate(...func_get_args());
-    }
+    // /**
+    //  * @see \Alexya\Locale\Localization::formatNumber
+    //  */
+    // function fNumber()
+    // {
+    //     return \Alexya\Locale\Localization::formatNumber(...func_get_args());
+    // }
+    //
+    // /**
+    //  * @see \Alexya\Locale\Localization::formatDate
+    //  */
+    // function fDate()
+    // {
+    //     return \Alexya\Locale\Localization::formatDate(...func_get_args());
+    // }
 }
 
 // Initialize classes
