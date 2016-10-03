@@ -106,4 +106,46 @@ class Controller extends Component
 
         return true;
     }
+
+    /**
+     * Default internal routing
+     *
+     * Routes the request to the controller methods by default, you can override this
+     */
+    public function render()
+    {
+        $response = "";
+        $URI = $this->_request->uri();
+
+        if(
+            !empty($URI[1]) &&
+            $this->isRouteable($URI[1])
+        ) {
+            $params = [];
+            if(isset($URI[2])) {
+                $params = array_slice($URI, 2);
+            } else if(count($this->request->post->getAll()) > 0) {
+                $params = $this->request->post->getAll();
+            }
+
+            $response = $this->{$URI[1]}(... $params);
+        }
+
+        if(!empty($this->request->post->action)) {
+            $params = [];
+            if(isset($URI[2])) {
+                $params = array_slice($URI, 2);
+            } else if(count($this->request->post->getAll()) > 0) {
+                $params = $this->request->post->getAll();
+            }
+
+            $response = $this->{$URI[1]}(... $params);
+        }
+
+        if(empty($response)) {
+            return $this->index();
+        }
+
+        return $response;
+    }
 }
