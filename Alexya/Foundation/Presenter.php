@@ -5,6 +5,7 @@ use \Exception;
 
 /**
  * The presenter.
+ * ==============
  *
  * The presenter is an intermediary between the Model and
  * the View (it's also called ViewModel).
@@ -30,7 +31,7 @@ class Presenter extends Component
     /**
      * Initializes the presenter.
      */
-    protected function _init()
+    protected function _init() : void
     {
         $this->_setModelVariables();
 
@@ -40,7 +41,7 @@ class Presenter extends Component
     /**
      * Sets Model variables as View variables.
      */
-    private function _setModelVariables()
+    private function _setModelVariables() : void
     {
         if(!$this->_triad->hasModel()) {
             return;
@@ -54,7 +55,7 @@ class Presenter extends Component
     /**
      * Set's the view logic.
      */
-    public function onInstance()
+    public function onInstance() : void
     {
 
     }
@@ -70,7 +71,7 @@ class Presenter extends Component
      * @param string $key   Key in `_data` array.
      * @param mixed  $value Value for `$key`.
      */
-    public function __set(string $key, $value)
+    public function __set(string $key, $value) : void
     {
         $this->set($key, $value);
     }
@@ -111,7 +112,7 @@ class Presenter extends Component
      *
      * @param string $key Key in `_data` array.
      */
-    public function __unset(string $key)
+    public function __unset(string $key) : void
     {
         unset($this->_triad->View->{$key});
     }
@@ -156,7 +157,7 @@ class Presenter extends Component
      * @param string $key   Key in `_data` array.
      * @param mixed  $value Value for `$key`.
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value) : void
     {
         $this->_triad->View->set($key, $value);
     }

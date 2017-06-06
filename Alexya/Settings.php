@@ -3,6 +3,7 @@ namespace Alexya;
 
 /**
  * Settings class.
+ * ===============
  *
  * This class offers an interface for handling configurations.
  *
@@ -14,15 +15,15 @@ namespace Alexya;
  *
  * ```php
  * $settings = new \Alexya\Settings([
- *     "autologin" => true,
- *     "data"      => [
+ *     "auto-login" => true,
+ *     "data"       => [
  *         "username" => "test",
  *         "password" => "test"
  *     ]
  * ]);
  *
- * if($settings->get("autologin")) {
- *     echo "Loggin ". $settings->get("data.username") .":". $settings->get("data.password");
+ * if($settings->get("auto-login")) {
+ *     echo "Login ". $settings->get("data.username") .":". $settings->get("data.password");
  * }
  * ```
  *
@@ -79,7 +80,7 @@ class Settings
      *
      * @return bool Whether it was properly set or not.
      */
-    public function set($name, $value)
+    public function set($name, $value) : bool
     {
         $name   =  explode(".", $name);
         $values =& $this->_settings;

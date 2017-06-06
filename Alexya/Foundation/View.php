@@ -68,7 +68,7 @@ class View extends Component
      * passed to the renderer and can be
      * accessed to ALL views.
      *
-     * @var \Alexya\Tools\Collection
+     * @var Collection
      */
     protected static $_globalData;
 
@@ -125,7 +125,7 @@ class View extends Component
     /**
      * Initializes the view.
      */
-    protected function _init()
+    protected function _init() : void
     {
         $this->_data    = new Collection();
         $this->_parsers = Container::Settings()->get("alexya.view.parsers");
@@ -147,7 +147,7 @@ class View extends Component
      *
      * It's executed once the view has been instantiated.
      */
-    public function onInstance()
+    public function onInstance() : void
     {
 
     }
@@ -157,7 +157,7 @@ class View extends Component
      *
      * @param string $path View path.
      */
-    public function setPath(string $path)
+    public function setPath(string $path) : void
     {
         $path = str_replace("\\", DS, $path);
 
@@ -181,7 +181,7 @@ class View extends Component
      *
      * @param string $name View name.
      */
-    public function setName(string $name)
+    public function setName(string $name) : void
     {
         if(self::$theme instanceof Theme) {
             $name = self::$theme->viewName($name);
@@ -208,7 +208,7 @@ class View extends Component
      * @param string $extension File extension associated with the parser.
      * @param string $parser    Parser class.
      */
-    public function parser(string $extension, string $parser)
+    public function parser(string $extension, string $parser) : void
     {
         $this->_parsers[$extension] = $parser;
     }
@@ -287,7 +287,7 @@ class View extends Component
      * @param string $name  Variable name.
      * @param mixed  $value Variable value.
      */
-    public function set(string $name, $value)
+    public function set(string $name, $value) : void
     {
         $this->_data[$name] = $value;
     }

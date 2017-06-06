@@ -5,6 +5,11 @@ use \Alexya\Tools\Collection;
 
 /**
  * Model class.
+ * ============
+ *
+ * This class represents the Model component of the HMV(VM)C.
+ *
+ * Its propose is to contain the data that's going to be rendered in the View.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -20,7 +25,7 @@ class Model extends Component
     /**
      * Initializes the model.
      */
-    protected function _init()
+    protected function _init() : void
     {
         $this->_data = new Collection();
 
@@ -32,7 +37,7 @@ class Model extends Component
      *
      * It's executed once the model has been instantiated.
      */
-    public function onInstance()
+    public function onInstance() : void
     {
 
     }
@@ -48,7 +53,7 @@ class Model extends Component
      * @param string $key   Key in `_data` array.
      * @param mixed  $value Value for `$key`.
      */
-    public function __set(string $key, $value)
+    public function __set(string $key, $value) : void
     {
         $this->set($key, $value);
     }
@@ -89,7 +94,7 @@ class Model extends Component
      *
      * @param string $key Key in `_data` array.
      */
-    public function __unset(string $key)
+    public function __unset(string $key) : void
     {
         unset($this->_data->$key);
     }
@@ -120,7 +125,7 @@ class Model extends Component
      * @param string $key   Key in `_data` array.
      * @param mixed  $value Value for `$key`.
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value) : void
     {
         $this->_data->set($key, $value);
     }
@@ -128,9 +133,9 @@ class Model extends Component
     /**
      * Returns all variables.
      *
-     * @return array All variables from the array.
+     * @return iterable All variables from the array.
      */
-    public function all() : array
+    public function all() : iterable
     {
         return $this->_data->getAll();
     }

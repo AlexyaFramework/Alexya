@@ -1,6 +1,6 @@
 <?php
 /**
- * Alexya Framework - config/paths.php
+ * Alexya Framework - The intelligent Loli Framework.
  *
  * This file contains the constants related to path
  *
@@ -8,41 +8,41 @@
  */
 
 /**
- * Alias for DIRECTORY_SEPARATOR
+ * Alias for DIRECTORY_SEPARATOR.
  */
 define("DS", DIRECTORY_SEPARATOR);
 
 /**
- * Root dir
+ * Root dir.
  */
 define("ROOT_DIR", dirname(dirname(__FILE__)).DS);
 
 /**
- * Alexya's core dir
+ * Alexya's core dir.
  */
 define("ALEXYA_DIR", ROOT_DIR."Alexya".DS);
 
 /**
- * Application's dir
+ * Application's dir.
  */
 define("APPLICATION_DIR", ROOT_DIR."Application".DS);
 
 /**
- * Models dir
+ * Models dir.
  */
 define("MODELS_DIR", APPLICATION_DIR."Models".DS);
 
 /**
- * Views dir
+ * Views dir.
  */
 define("VIEWS_DIR", APPLICATION_DIR."Views".DS);
 
 /**
- * Controllers dir
+ * Controllers dir.
  */
 define("CONTROLLERS_DIR", APPLICATION_DIR."Controllers".DS);
 
 /**
- * Translations dir
+ * Translations dir.
  */
 define("TRANSLATIONS_DIR", ROOT_DIR."translations".DS);

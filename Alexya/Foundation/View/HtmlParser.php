@@ -3,6 +3,7 @@ namespace Alexya\Foundation\View;
 
 /**
  * The HTML parser.
+ * ================
  *
  * This parser simply returns the content of the view file.
  *

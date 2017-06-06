@@ -1,10 +1,10 @@
 <?php
 /**
- * Alexya Framework - The intelligent Loli Framework
+ * Alexya Framework - The intelligent Loli Framework.
  *
  * This file contains the default routes.
  * All of them can be overridden by using
- * the class `\Alexya\Router\Router`
+ * the class `\Alexya\Router\Router`.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -17,7 +17,9 @@ return [
      *
      * It goes as follow:
      *
-     *     /Controller/Action
+     * ```
+     * /Controller/Action
+     * ```
      *
      * If `Action` is empty the default action `index` will be called on `Controller`,
      * this means that `/Login/index` is the same as `/Login`.
@@ -42,7 +44,7 @@ return [
         $triad = new \Alexya\Foundation\Page($page, $request);
 
         if(
-            !is_callable([$triad->Controller, $action]) ||
+            !$triad->exists() ||
             empty($page)
         ) {
             // The requested action isn't available, throw exception
@@ -54,7 +56,7 @@ return [
             $params = $_POST;
         }
 
-        $response = $triad->Controller->$action(... $params);
+        $response = $triad->Controller->$action(... array_values($params));
 
         if(!$response instanceof \Alexya\Http\Response) {
             // Allow user to return the content of the response instead of the

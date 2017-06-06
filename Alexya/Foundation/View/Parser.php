@@ -6,6 +6,7 @@ use Alexya\Tools\Collection;
 
 /**
  * Parser class.
+ * =============
  *
  * This is the base class for all view parsers.
  *

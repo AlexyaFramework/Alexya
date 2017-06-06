@@ -6,6 +6,7 @@ use \Smarty;
 
 /**
  * The Smarty parser.
+ * ==================
  *
  * This parser assumes that the file is a valid smarty template.
  *

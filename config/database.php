@@ -1,51 +1,51 @@
 <?php
 /**
- * Alexya Framework - config/database.php
+ * Alexya Framework - The intelligent Loli Framework.
  *
  * This file contains the configuration for the
- * database access
+ * database access.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
 
 return [
     /**
-     * Whether the database should used or not
+     * Whether the database should used or not.
      */
     "enabled"    => true,
 
     /**
-     * Server host
+     * Server host.
      */
     "host"       => "127.0.0.1",
 
     /**
-     * Server port
+     * Server port.
      */
     "port"       => 3306,
 
     /**
-     * Server type
+     * Server type.
      */
     "type"       => "mysql",
 
     /**
-     * Server user name
+     * Server user name.
      */
     "username"   => "root",
 
     /**
-     * Server password
+     * Server password.
      */
     "password"   => "",
 
     /**
-     * Database name
+     * Database name.
      */
     "database"   => "alexya",
 
     /**
-     * Alternative PDO options
+     * Alternative PDO options.
      */
     "options"    => []
 ];

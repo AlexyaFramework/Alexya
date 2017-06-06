@@ -1,11 +1,11 @@
 <?php
 /**
- * Alexya Framework - The intelligent Loli Framework
+ * Alexya Framework - The intelligent Loli Framework.
  *
  * This file bootstraps the application.
  *
  * It will load composer's autoloader, configuration files
- * and register [Container's](Alexya/Container.php) bindings
+ * and register `\Alexya\Container` bindings.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -32,11 +32,11 @@ require_once("config/paths.php");
     $settings = \Alexya\Container::Settings()->get("alexya.logger");
 
     if(!$settings["enabled"]) {
-        return;
+        return null;
     }
 
-    if($settings["type"] == "database") {
-        $database = \Alexya\Container::Database;
+    if($settings["type"] === "database") {
+        $database = \Alexya\Container::Database();
 
         $logger = new \Alexya\Logger\Database(
             $database,
@@ -59,8 +59,13 @@ require_once("config/paths.php");
 });
 
 \Alexya\Container::registerSingleton("Router", function() {
+    $Settings = \Alexya\Container::Settings();
+
     $routes = require_once(ROOT_DIR."config".DS."routes.php");
-    $router = new \Alexya\Router\Router();
+    $router = new \Alexya\Router\Router(
+        $Settings->get("alexya.router.base_path"),
+        $Settings->get("alexya.router.uri")
+    );
 
     foreach($routes as $key => $value) {
         $method = null;
@@ -76,35 +81,44 @@ require_once("config/paths.php");
 });
 
 // User might not have included the Database components, so just register its binding in case it's included
-if(class_exists("\Alexya\Database\Connection") && \Alexya\Container::Settings()->get("database.enabled")) {
+if(
+    \Alexya\Container::Settings()->get("database.enabled") &&
+    class_exists("\\Alexya\\Database\\Connection")
+) {
     \Alexya\Container::registerSingleton("Database", function() {
         $settings = \Alexya\Container::Settings()->get("database");
 
-        $database = new \Alexya\Database\Connection($settings["host"], $settings["port"], $settings["username"], $settings["password"], $settings["database"]);
+        $database = new \Alexya\Database\Connection(
+            $settings["host"],
+            $settings["port"],
+            $settings["username"],
+            $settings["password"],
+            $settings["database"]
+        );
 
         return $database;
     });
+
     // Initialize ORM model
-    \Alexya\Database\ORM\Model::initialize(\Alexya\Container::Database(), \Alexya\Container::Settings()->get("database.namespace"));
-}
-
-// Same goes for SocksWork
-if(class_exists("\Alexya\SocksWork\Connection") && \Alexya\Container::Settings()->get("alexya.sockswork.enabled")) {
-    \Alexya\Container::registerSingleton("SocksWork", function() {
-        $settings = \Alexya\Container::Settings()->get("alexya.sockswork");
-
-        $sockswork = new \Alexya\SocksWork\Connection($settings["host"], $settings["port"], $settings["timeout"]);
-
-        return $sockswork;
-    });
+    \Alexya\Database\ORM\Model::initialize(
+        \Alexya\Container::Database(),
+        \Alexya\Container::Settings()->get("database.namespace")
+    );
 }
 
 // And for Session
-if(class_exists("\Alexya\Tools\Session\Session") && \Alexya\Container::Settings()->get("alexya.session.enabled")) {
+if(
+    \Alexya\Container::Settings()->get("alexya.session.enabled") &&
+    class_exists("\\Alexya\\Tools\\Session\\Session")
+) {
     \Alexya\Container::registerSingleton("Session", function() {
         $settings = \Alexya\Container::Settings()->get("alexya.session");
 
-        $session = new \Alexya\Tools\Session\Session($settings["name"], $settings["lifetime"], $settings["path"]);
+        $session = new \Alexya\Tools\Session\Session(
+            $settings["name"],
+            $settings["lifetime"],
+            $settings["path"]
+        );
 
         return $session;
     });
@@ -114,28 +128,28 @@ if(class_exists("\Alexya\Tools\Session\Session") && \Alexya\Container::Settings(
 // End Register container's bindings //
 ///////////////////////////////////////
 
-if(class_exists("\Alexya\Localization\Translator")) {
-
+if(class_exists("\\Alexya\\Localization\\Translator")) {
     // Register translator on container
     \Alexya\Container::registerSingleton("Translator", function() {
         $translations = [];
         $directory    = \Alexya\FileSystem\Directory::make(TRANSLATIONS_DIR, \Alexya\FileSystem\Directory::MAKE_DIRECTORY_EXISTS_OPEN);
+        $loc          = \Alexya\Container::Settings()->get("alexya.locale");
 
-        // All files from the `translations` directory are suposed to be PHP scripts
+        // All files from the `translations` directory are supposed to be PHP scripts
         // that returns an array with the translations, the name of each file is
         // is the language name used by the translator.
         foreach($directory->getFiles() as $file) {
             $translations[$file->getName()] = require($file->getPath());
         }
 
-        return new \Alexya\Localization\Translator($translations, \Alexya\Container::Settings()->get("alexya.locale"));
+        return new \Alexya\Localization\Translator($translations, \Alexya\Localization\Locale::get($loc));
     });
 
     ////////////////////////
     // Function shortcuts //
     ////////////////////////
     /**
-     * @see \Alexya\Locale\Translator::translate
+     * @see \Alexya\Localization\Translator::translate
      */
     function t()
     {
@@ -143,24 +157,20 @@ if(class_exists("\Alexya\Localization\Translator")) {
     }
 
     // /**
-    //  * @see \Alexya\Locale\Localization::formatNumber
+    //  * @see \Alexya\Localization\Localization::formatNumber
     //  */
     // function fNumber()
     // {
-    //     return \Alexya\Locale\Localization::formatNumber(...func_get_args());
+    //     return \Alexya\Localization\Localization::formatNumber(...func_get_args());
     // }
     //
     // /**
-    //  * @see \Alexya\Locale\Localization::formatDate
+    //  * @see \Alexya\Localization\Localization::formatDate
     //  */
     // function fDate()
     // {
-    //     return \Alexya\Locale\Localization::formatDate(...func_get_args());
+    //     return \Alexya\Localization\Localization::formatDate(...func_get_args());
     // }
 }
-
-// Initialize classes
-//\Alexya\Exception\Handler::init();
-//\Alexya\Container::get("Router")->init();
 
 \Alexya\Container::Logger()->debug("Alexya is bootstrapped!");

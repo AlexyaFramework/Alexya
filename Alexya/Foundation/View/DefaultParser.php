@@ -5,6 +5,7 @@ use \Exception;
 
 /**
  * The default parser.
+ * ===================
  *
  * This parser simply extracts view's variables and includes the
  * view file as a php script.

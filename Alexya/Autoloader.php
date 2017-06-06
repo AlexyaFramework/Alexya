@@ -4,7 +4,8 @@ namespace Alexya;
 use Alexya\Tools\Str;
 
 /**
- * Class autoloader.
+ * Autoloader class.
+ * =================
  *
  * This autoloader allows you to autoload classes.
  *
@@ -76,7 +77,7 @@ class Autoloader
      * @param string|array $prefix Namespace to autoload.
      * @param string       $path   Path where it's located.
      */
-    public function add($prefix, string $path = "")
+    public function add($prefix, string $path = "") : void
     {
         if(is_array($prefix)) {
             foreach($prefix as $key => $value) {
@@ -121,15 +122,15 @@ class Autoloader
      *
      * @param bool $prepend Whether this instance should be placed at the end of the stack or not.
      */
-    public function register(bool $prepend = false)
+    public function register(bool $prepend = false) : void
     {
         spl_autoload_register([$this, "load"], true, $prepend);
     }
 
     /**
-     * Removes this instance from the registered autoloaders.
+     * Removes this instance from the registered autoloader's.
      */
-    public function unregister()
+    public function unregister() : void
     {
         spl_autoload_unregister([$this, "load"]);
     }

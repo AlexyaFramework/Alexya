@@ -1,10 +1,9 @@
 <?php
 namespace Alexya;
 
-use \Closure;
-
 /**
- * Container class
+ * Container class.
+ * ================
  *
  * Implements the Inversion of Control along with the
  * Dependency Injection design pattern.
@@ -33,8 +32,8 @@ use \Closure;
  * ```
  *
  * Both methods accepts 2 parameters:
- *  * A string being the name to reference the bindnig.
- *  * A closure that will be executed for instancing the object.
+ *  * A string being the name to reference the binding.
+ *  * A callback that will be executed for instancing the object.
  *
  * Once the binding has been registered you can retrieve it using the method `get`:
  *
@@ -50,7 +49,7 @@ use \Closure;
  * ```
  *
  * The parameter it accepts is the string sent to the `register` or `registerSingleton` method
- * to identify the binding. You can send an array containing the parameters that will be sent to the closure.
+ * to identify the binding. You can send an array containing the parameters that will be sent to the callback.
  *
  * To check if a specific binding has been registered use the method `isRegistered` the same
  * way as the `get` method. It will return `true` if the binding is registered or `false` if not.
@@ -92,7 +91,7 @@ class Container
      *
      * @param string $name Binding's name.
      */
-    public static function unregister(string $name)
+    public static function unregister(string $name) : void
     {
         unset(self::$_bindings[$name]);
     }
@@ -102,30 +101,30 @@ class Container
      *
      * If `$name` is already registered it will be overridden.
      *
-     * @param string  $name    Binding's name.
-     * @param Closure $closure Closure to execute to instance the binding.
+     * @param string   $name     Binding's name.
+     * @param callable $callback Callback to execute to instance the binding.
      */
-    public static function register(string $name, Closure $closure)
+    public static function register(string $name, callable $callback) : void
     {
         self::$_bindings[$name] = [
-            "type"    => "nonSingleton",
-            "closure" => $closure
+            "type"     => "nonSingleton",
+            "callback" => $callback
         ];
     }
 
     /**
      * Registers a singleton binding.
      *
-     * The closure will be executed just once so there's only one instance of the binding.
+     * The callback will be executed just once so there's only one instance of the binding.
      *
-     * @param string  $name    Binding's name.
-     * @param Closure $closure Closure to execute to instance the binding.
+     * @param string   $name     Binding's name.
+     * @param callable $callback Callback to execute to instance the binding.
      */
-    public static function registerSingleton(string $name, Closure $closure)
+    public static function registerSingleton(string $name, callable $callback) : void
     {
         self::$_bindings[$name] = [
             "type"       => "singleton",
-            "closure"    => $closure,
+            "callback"   => $callback,
             "isExecuted" => false
         ];
     }
@@ -136,7 +135,7 @@ class Container
      * @param string $name Binding's name.
      * @param array  $args Arguments sent to the binding.
      *
-     * @return mixed The result of calling binding's closure.
+     * @return mixed The result of calling binding's callback.
      */
     public static function get(string $name, array $args = [])
     {
@@ -147,17 +146,17 @@ class Container
         $binding = self::$_bindings[$name];
 
         if($binding["type"] !== "singleton") {
-            return $binding["closure"](... $args);
+            return $binding["callback"](... $args);
         }
 
-        $result = $binding["closure"];
+        $result = $binding["callback"];
         if(!$binding["isExecuted"]) {
             $binding["isExecuted"] = true;
-            $binding["closure"]    = $binding["closure"](... $args);
+            $binding["callback"]   = $binding["callback"](... array_values($args));
 
             self::$_bindings[$name] = $binding;
 
-            $result = $binding["closure"];
+            $result = $binding["callback"];
         }
 
         return $result;
@@ -175,7 +174,7 @@ class Container
      * @param string $name Binding's name.
      * @param array  $args Arguments sent to the binding.
      *
-     * @return mixed The result of calling binding's closure.
+     * @return mixed The result of calling binding's callback.
      *
      * @see Container::get
      */

@@ -5,6 +5,7 @@ use \Alexya\Http\Response;
 
 /**
  * Controller class.
+ * =================
  *
  * This class will handle all actions that the user will request
  * You MUST extend this class in order to use (H)MV(VM)C.
@@ -47,14 +48,14 @@ class Controller extends Component
      * all methods name that can't be
      * routeable through the request URI.
      *
-     * @var array Array containing methods.
+     * @var array
      */
     public $noRouteable = [];
 
     /**
      * Initializes the controller.
      */
-    protected function _init()
+    protected function _init() : void
     {
         $this->noRouteable[] = "onInstance";
 
@@ -66,7 +67,7 @@ class Controller extends Component
      *
      * It's executed once the controller has been instantiated.
      */
-    public function onInstance()
+    public function onInstance() : void
     {
 
     }
@@ -76,9 +77,9 @@ class Controller extends Component
      *
      * If no action is requested it will execute this.
      *
-     * @return \Alexya\Http\Response Response object.
+     * @return Response Response object.
      */
-    public function index()
+    public function index() : Response
     {
         $response = new Response([
             "Content-Type" => "text/html"

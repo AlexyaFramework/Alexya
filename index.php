@@ -1,6 +1,6 @@
 <?php
 /**
- * Alexya Framework - The intelligent Loli Framework
+ * Alexya Framework - The intelligent Loli Framework.
  *
  * This file will act as front controller, will load
  * bootstrap.php and call router.
@@ -11,7 +11,7 @@
  *
  * The last statement of the file is the call to the router, it should
  * stay the last since (by default) Alexya will finnish the execution once
- * the router has finnished.
+ * the router has finished.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */

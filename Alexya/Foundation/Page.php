@@ -3,6 +3,7 @@ namespace Alexya\Foundation;
 
 /**
  * Page triad.
+ * ===========
  *
  * Simply used for storing the HMV(VM)C in the package `\Application\Page`
  * instead of `\Application`.

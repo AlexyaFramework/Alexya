@@ -4,6 +4,9 @@ namespace Alexya\Foundation;
 use Alexya\Http\Request;
 
 /**
+ * Component class.
+ * ================
+ *
  * Base class for the HMV(VM)C components.
  *
  * It contains the reference to the triad and the request.
@@ -43,5 +46,5 @@ abstract class Component
     /**
      * Initializes the component.
      */
-    protected abstract function _init();
+    protected abstract function _init() : void;
 }

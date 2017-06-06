@@ -7,6 +7,7 @@ use \Alexya\Tools\Collection;
 
 /**
  * Triad class.
+ * ============
  *
  * This class is the main component of the HMV(VM)C design pattern.
  * It's basically a link between all the components of the design pattern:
@@ -199,6 +200,8 @@ class Triad
         } else if($name === "view") {
             return $this->_loadView();
         }
+
+        return null;
     }
 
     /**

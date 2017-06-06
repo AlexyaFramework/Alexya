@@ -111,7 +111,7 @@ return [
            /**
             * Table columns.
             */
-           "colums" =>  [
+           "columns" =>  [
                "date"    => "{YEAR}-{MONTH}-{DAY} {HOUR}:{MINUTE}:{SECOND}",
                "caller"  => "{CALLER_CLASS}{CALLER_TYPE}{CALLER_FUNCTION} ({CALLER_FILE}:{CALLER_LINE})",
                "level"   => "{LEVEL}",
@@ -137,7 +137,7 @@ return [
          *
          * If any file does not match the regexp it won't be saved.
          *
-         * This settings can be overriden, for more info go to [\Alexya\Upload::save](../Alexya/Upload).
+         * This settings can be overridden, for more info go to [\Alexya\Upload::save](../Alexya/Upload).
          */
         "directories" => [
             "*" => ROOT_DIR."uploads"
@@ -185,7 +185,7 @@ return [
     ],
 
     /**
-     * SocksWork settings
+     * SocksWork settings.
      */
     "sockswork" => [
         /**
