@@ -21,11 +21,13 @@ use \Alexya\Http\Response;
  * If you don't want an specific method to be routable add it to the
  * array "noRouteable":
  *
- *     public function onInstance()
- *     {
- *         $this->noRouteable[] = "secret_method";
- *         $this->noRouteable[] = "delete_all_accounts_because_of_the_lulz"
- *     }
+ * ```php
+ * public function onInstance()
+ * {
+ *     $this->noRouteable[] = "secret_method";
+ *     $this->noRouteable[] = "delete_all_accounts_because_of_the_lulz"
+ * }
+ * ```
  *
  * Please, DO NOT override the constructor since it will contain needed information
  * to start up the controller, instead use the function `\Alexya\Foundation\Controller::onInstance`
@@ -99,7 +101,7 @@ class Controller extends Component
         }
 
         foreach($this->noRouteable as $m) {
-            if($method == $m) {
+            if($method === $m) {
                 return false;
             }
         }
@@ -108,9 +110,11 @@ class Controller extends Component
     }
 
     /**
-     * Default internal routing
+     * Default internal routing.
      *
-     * Routes the request to the controller methods by default, you can override this
+     * Routes the request to the controller methods by default, you can override this.
+     *
+     * @return Response|mixed Response object.
      */
     public function render()
     {
@@ -124,19 +128,19 @@ class Controller extends Component
             $params = [];
             if(isset($URI[2])) {
                 $params = array_slice($URI, 2);
-            } else if(count($this->request->post->getAll()) > 0) {
-                $params = $this->request->post->getAll();
+            } else if(count($this->_request->post) > 0) {
+                $params = $this->_request->post;
             }
 
             $response = $this->{$URI[1]}(... $params);
         }
 
-        if(!empty($this->request->post->action)) {
+        if(!empty($this->_request->post["action"])) {
             $params = [];
             if(isset($URI[2])) {
                 $params = array_slice($URI, 2);
-            } else if(count($this->request->post->getAll()) > 0) {
-                $params = $this->request->post->getAll();
+            } else if(count($this->_request->post) > 0) {
+                $params = $this->_request->post;
             }
 
             $response = $this->{$URI[1]}(... $params);
@@ -145,6 +149,12 @@ class Controller extends Component
         if(empty($response)) {
             return $this->index();
         }
+
+        /*if(!($response instanceof Response)) {
+            $response = new Response([
+                "Content-Type" => "text/html"
+             ], $response);
+        }*/
 
         return $response;
     }

@@ -32,7 +32,23 @@ class Presenter extends Component
      */
     protected function _init()
     {
+        $this->_setModelVariables();
+
         $this->onInstance();
+    }
+
+    /**
+     * Sets Model variables as View variables.
+     */
+    private function _setModelVariables()
+    {
+        if(!$this->_triad->hasModel()) {
+            return;
+        }
+
+        foreach($this->_triad->Model->all() as $key => $value) {
+            $this->_triad->View->set($key, $value);
+        }
     }
 
     /**
@@ -76,7 +92,7 @@ class Presenter extends Component
     /**
      * Magic method `__isset`.
      *
-     * Checks whetheer a variable is set in the
+     * Checks whether a variable is set in the
      * array or not.
      *
      * @param string $key Key in `_data` array.
@@ -85,7 +101,7 @@ class Presenter extends Component
      */
     public function __isset(string $key) : bool
     {
-        return isset($this->triad->View->{$key});
+        return isset($this->_triad->View->{$key});
     }
 
     /**
@@ -97,13 +113,13 @@ class Presenter extends Component
      */
     public function __unset(string $key)
     {
-        unset($this->triad->View->{$key});
+        unset($this->_triad->View->{$key});
     }
 
     /**
      * Auto render the view.
      *
-     * @return string Redered view.
+     * @return string Rendered view.
      */
     public function __toString() : string
     {

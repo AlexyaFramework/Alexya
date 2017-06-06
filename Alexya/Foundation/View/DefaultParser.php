@@ -17,6 +17,8 @@ class DefaultParser extends Parser
      * Parses the view.
      *
      * @return string Parsed view.
+     *
+     * @throws Exception If something goes wrong.
      */
     public function parse() : string
     {
