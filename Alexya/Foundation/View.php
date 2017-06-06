@@ -4,6 +4,12 @@ namespace Alexya\Foundation;
 use \Exception;
 
 use \Alexya\Container;
+
+use Alexya\Foundation\View\{
+    Theme,
+    Parser
+};
+
 use \Alexya\FileSystem\File;
 use \Alexya\Tools\{
     Collection,
@@ -12,6 +18,7 @@ use \Alexya\Tools\{
 
 /**
  * View class.
+ * ===========
  *
  * The view is the file that are going to be rendered and displayed
  * in the browser.
@@ -23,6 +30,20 @@ use \Alexya\Tools\{
  * You can add variables to the view by using the method `\Alexya\Foundation\View::set`
  * or the magic method `\Alexya\Foundation\View::__set`.
  *
+ * You can specify the global theme for the view by setting the `$theme` static property.
+ * If you don't and there session variable `theme` is set, it will be used to set the theme,
+ * being the variable the key of the `application.view.themes` settings array.
+ *
+ * Example:
+ *
+ * ```php
+ * // Default theme.
+ * View::$theme = new DefaultTheme();
+ *
+ * // Set global $theme through the session variable.
+ * Container::Session()->set("theme", "test");
+ * ```
+ *
  * @author Manulaiko <manulaiko@gmail.com>
  */
 class View extends Component
@@ -30,6 +51,15 @@ class View extends Component
     ///////////////////////////////////
     // Static methods and properties //
     ///////////////////////////////////
+
+    /**
+     * Global theme.
+     *
+     * Default theme to use for all views.
+     *
+     * @var Theme
+     */
+    public static $theme = null;
 
     /**
      * Global variables array.
@@ -53,7 +83,7 @@ class View extends Component
      */
     public static function global(string $key, $value)
     {
-        if(static::$_globalData == null) {
+        if(static::$_globalData === null) {
             static::$_globalData = new Collection();
         }
 
@@ -67,7 +97,7 @@ class View extends Component
     /**
      * View's variables.
      *
-     * @var \Alexya\Tools\Collection
+     * @var Collection
      */
     protected $_data;
 
@@ -97,7 +127,17 @@ class View extends Component
      */
     protected function _init()
     {
-        $this->_data = new Collection();
+        $this->_data    = new Collection();
+        $this->_parsers = Container::Settings()->get("alexya.view.parsers");
+
+        // Override the theme by using the `$_SESSION["theme"]` var.
+        $themes = Container::Settings()->get("alexya.view.themes");
+        $theme  = Container::Session()->get("theme");
+        if(isset($themes[$theme])) {
+            self::$theme = $themes[$theme];
+        }
+
+        $this->set("theme", self::$theme);
 
         $this->onInstance();
     }
@@ -121,12 +161,12 @@ class View extends Component
     {
         $path = str_replace("\\", DS, $path);
 
+        if(Str::startsWith($path, DS)) {
+            $path = substr($path, 1);
+        }
+
         if(!Str::startsWith($path, ROOT_DIR)) {
-            if(Str::startsWith($path, DS)) {
-                $path = ROOT_DIR . substr($path, 1);
-            } else {
-                $path = ROOT_DIR . $path;
-            }
+            $path = ROOT_DIR . $path;
         }
 
         if(!Str::endsWith($path, DS)) {
@@ -143,6 +183,10 @@ class View extends Component
      */
     public function setName(string $name)
     {
+        if(self::$theme instanceof Theme) {
+            $name = self::$theme->viewName($name);
+        }
+
         $settings = Container::Settings()->get("alexya.view");
 
         // Assure that the name is associated with a valid parser
@@ -155,7 +199,8 @@ class View extends Component
         }
 
         // Set name to the default parser
-        $this->_name = $name .".". $settings["default"];    }
+        $this->_name = $name .".". $settings["default"];
+    }
 
     /**
      * Adds (or overrides) a parser.
@@ -175,19 +220,26 @@ class View extends Component
      */
     public function render() : string
     {
-        $file   = $this->_getFile();
+        $file = $this->_getFile();
+
+        /**
+         * Parser object.
+         *
+         * @var Parser $parser
+         */
         $parser = null;
+
         $this->_data->append(View::$_globalData);
 
         foreach($this->_parsers as $extension => $class) {
-            if($file->getExtension() == $extension) {
+            if($file->getExtension() === $extension) {
                 $parser = new $class($file, $this->_data);
 
                 break;
             }
         }
 
-        if($parser == null) {
+        if($parser === null) {
             Container::Logger()->debug("Couldn't get parser for view ". $file->getPath());
 
             return "";
@@ -201,21 +253,24 @@ class View extends Component
     /**
      * Returns the view file.
      *
-     * @return \Alexya\FileSystem\File View file.
+     * @return File View file.
+     *
+     * @throws Exception If the file does not exist.
      */
     protected function _getFile() : File
     {
-        if(File::exists($this->_path.$this->_name)) {
-            return new File($this->_path.$this->_name);
+        $path = $this->_path.$this->_name;
+        if(File::exists($path)) {
+            return new File($path);
         }
 
-        throw new Exception("The view file {$this->_path}{$this->_name} doesn't exist!");
+        throw new Exception("The view file {$path} doesn't exist!");
     }
 
     /**
      * Auto render the view.
      *
-     * @return string Redered view.
+     * @return string Rendered view.
      */
     public function __toString() : string
     {
@@ -235,5 +290,18 @@ class View extends Component
     public function set(string $name, $value)
     {
         $this->_data[$name] = $value;
+    }
+
+    /**
+     * Returns a variable.
+     *
+     * @param string $name    Variable name.
+     * @param mixed  $default Default value to return.
+     *
+     * @return mixed $value Variable value (or `$default`).
+     */
+    public function get(string $name, $default = null)
+    {
+        return ($this->_data[$name] ?? $default);
     }
 }

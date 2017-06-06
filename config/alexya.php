@@ -17,7 +17,7 @@ return [
      *
      * @see \Alexya\Localization\Transaltor For a full list of locale.
      */
-    "locale"  => "en_US",
+    "locale"  => "en",
 
     /**
      * View settings.
@@ -26,7 +26,7 @@ return [
         /**
          * Default parser.
          */
-        "default" => "php",
+        "default" => "tpl",
 
         /**
          * Available parsers.
@@ -38,6 +38,16 @@ return [
             "php"  => "\\Alexya\\Foundation\\View\\DefaultParser",
             "html" => "\\Alexya\\Foundation\\View\\HtmlParser",
             "tpl"  => "\\Alexya\\Foundation\\View\\SmartyParser",
+        ],
+
+        /**
+         * Available themes.
+         *
+         * The key is the name of the theme (used by the session variable).
+         * The value is the `\Alexya\Foundation\View\Theme` instance.
+         */
+        "themes" => [
+
         ]
     ],
 
@@ -111,11 +121,11 @@ return [
     ],
 
     /**
-     * Upload settings
+     * Upload settings.
      */
     "uploads" => [
         /**
-         * Whether file uploading is enabled or not
+         * Whether file uploading is enabled or not.
          */
         "enabled" => true,
 
@@ -127,7 +137,7 @@ return [
          *
          * If any file does not match the regexp it won't be saved.
          *
-         * This settings can be overriden, for more info go to [\Alexya\Upload::save](../Alexya/Upload)
+         * This settings can be overriden, for more info go to [\Alexya\Upload::save](../Alexya/Upload).
          */
         "directories" => [
             "*" => ROOT_DIR."uploads"
@@ -135,41 +145,41 @@ return [
     ],
 
     /**
-     * Cache settings
+     * Cache settings.
      */
     "cache" => [
         /**
-         * Whether the caching system is enabled or not
+         * Whether the caching system is enabled or not.
          */
         "enabled"  => true,
 
         /**
-         * Lifetime of the cache (in seconds)
+         * Lifetime of the cache (in seconds).
          */
         "lifetime" => 21600
     ],
 
     /**
-     * Session settings
+     * Session settings.
      */
     "session" => [
         /**
-         * Whether the session is enabled or not
+         * Whether the session is enabled or not.
          */
         "enabled" => true,
 
         /**
-         * Session name
+         * Session name.
          */
         "name"    => "Alexya",
 
         /**
-         * Session save path
+         * Session save path.
          */
         "path" => ROOT_DIR."sessions",
 
         /**
-         * Session's lifetime (in seconds)
+         * Session's lifetime (in seconds).
          */
         'lifetime' => 7200
     ],
@@ -179,18 +189,38 @@ return [
      */
     "sockswork" => [
         /**
-         * Timeout in milliseconds for connection
+         * Whether SocksWork is enabled or not.
+         */
+        "enabled" => false,
+
+        /**
+         * Timeout in milliseconds for connection.
          */
         "timeout" => 100,
 
         /**
-         * IP/Host to connect
+         * IP/Host to connect.
          */
         "server"  => "127.0.0.1",
 
         /**
-         * Server's port
+         * Server's port.
          */
         "port"    => 1207
+    ],
+
+    /**
+     * Router settings.
+     */
+    "router" => [
+        /**
+         * Router's base path.
+         */
+        "base_path" => "",
+
+        /**
+         * URI used to match routes.
+         */
+        "uri" => ($_SERVER["PATH_INFO"] ?? "/")
     ]
 ];
