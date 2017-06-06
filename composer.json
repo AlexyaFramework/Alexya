@@ -1,6 +1,7 @@
 {
     "name": "alexya-framework/alexya",
     "type": "framework",
+    "version": "3.1.0",
     "description": "The intelligent Loli Framework",
     "keywords": ["php", "framework", "mvc", "mvvm", "hmvc", "hmvvmc", "orm", "intelligent", "php7", "alexya"],
     "license": "GNU",
