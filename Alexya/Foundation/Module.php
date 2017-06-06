@@ -12,9 +12,9 @@ namespace Alexya\Foundation;
 class Module extends Triad
 {
     /**
-     * Namespace preffix.
+     * Namespace prefix.
      *
      * @var string
      */
-    protected $_preffix = "\\Application\\Module\\";
+    protected $_prefix = "\\Application\\Module\\";
 }

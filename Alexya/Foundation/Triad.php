@@ -1,8 +1,6 @@
 <?php
 namespace Alexya\Foundation;
 
-use \Exception;
-
 use \Alexya\Container;
 use \Alexya\Http\Request;
 use \Alexya\Tools\Collection;
@@ -11,7 +9,7 @@ use \Alexya\Tools\Collection;
  * Triad class.
  *
  * This class is the main component of the HMV(VM)C design pattern.
- * It's bassically a nexe between all the components of the design pattern:
+ * It's basically a link between all the components of the design pattern:
  *
  *  * The Model
  *  * The View
@@ -29,42 +27,46 @@ use \Alexya\Tools\Collection;
  * The triad name will be used to instance all of the components since
  * all of them should be on their correspondent package:
  *
- *     $triad = new \Alexya\Foundation\Triad("Test", $request);
+ * ```php
+ * $triad = new \Alexya\Foundation\Triad("Test", $request);
  *
- *     var_dump($triad->Model);
- *     // Object of type `\Application\Model\Test`
+ * var_dump($triad->Model);
+ * // Object of type `\Application\Model\Test`
  *
- *     var_dump($triad->View);
- *     // Object of type `\Application\View\Test`
+ * var_dump($triad->View);
+ * // Object of type `\Application\View\Test`
  *
- *     var_dump($triad->Presenter);
- *     // Object of type `\Application\Presenter\Test`
+ * var_dump($triad->Presenter);
+ * // Object of type `\Application\Presenter\Test`
  *
- *     var_dump($triad->Controller);
- *     // Object of type `\Application\Controller\Test`
+ * var_dump($triad->Controller);
+ * // Object of type `\Application\Controller\Test`
+ * ```
  *
- * The property `$_preffix` holds the preffix to apply to the location of the component.
+ * The property `$_prefix` holds the prefix to apply to the location of the component.
  * By default it's `\Application\`, if however you want to store the components in the
  * package `\Application\Components` extend this class and change the property:
  *
- *     class Triad extends \Alexya\Foundation\Triad
- *     {
- *         protected $_preffix = "\\Application\\Components\\";
- *     }
+ * ```php
+ * class Triad extends \Alexya\Foundation\Triad
+ * {
+ *     protected $_prefix = "\\Application\\Components\\";
+ * }
  *
- *     $triad = new Triad("Test", $request);
+ * $triad = new Triad("Test", $request);
  *
- *     var_dump($triad->Model);
- *     // Object of type `\Application\Components\Model\Test`
+ * var_dump($triad->Model);
+ * // Object of type `\Application\Components\Model\Test`
  *
- *     var_dump($triad->View);
- *     // Object of type `\Application\Components\View\Test`
+ * var_dump($triad->View);
+ * // Object of type `\Application\Components\View\Test`
  *
- *     var_dump($triad->Presenter);
- *     // Object of type `\Application\Components\Presenter\Test`
+ * var_dump($triad->Presenter);
+ * // Object of type `\Application\Components\Presenter\Test`
  *
- *     var_dump($triad->Controller);
- *     // Object of type `\Application\Components\Controller\Test`
+ * var_dump($triad->Controller);
+ * // Object of type `\Application\Components\Controller\Test`
+ * ```
  *
  * The components of each triad follows the lazy-load design pattern for an improved
  * performance.
@@ -76,21 +78,26 @@ use \Alexya\Tools\Collection;
  *
  * The triad instance can be accessed from any of the components with the `$_triad` property.
  *
+ * @property \Alexya\Foundation\Controller $Controller Controller object.
+ * @property \Alexya\Foundation\Model      $Model      Model object.
+ * @property \Alexya\Foundation\View       $View       View object.
+ * @property \Alexya\Foundation\Presenter  $Presenter  Presenter object.
+ *
  * @author Manulaiko <manulaiko@gmail.com>
  */
 class Triad
 {
     /**
-     * Package preffix.
+     * Package prefix.
      *
      * @var string
      */
-    protected $_preffix = "\\Application\\";
+    protected $_prefix = "\\Application\\";
 
     /**
      * The request that leaded to the instantiation of the triad.
      *
-     * @var \Alexya\Http\Request
+     * @var Request
      */
     protected $_request;
 
@@ -104,14 +111,14 @@ class Triad
     /**
      * Children triads.
      *
-     * @var \Alexya\Tools\Collection
+     * @var Collection
      */
     public $children;
 
     /**
      * Parent triad.
      *
-     * @var \Alexya\Foundation\Triad
+     * @var Triad
      */
     public $parent;
 
@@ -125,8 +132,8 @@ class Triad
     /**
      * Constructor.
      *
-     * @param string               $name    Triad name.
-     * @param \Alexya\Http\Request $request Request.
+     * @param string  $name    Triad name.
+     * @param Request $request Request.
      */
     public function __construct(string $name, Request $request)
     {
@@ -155,6 +162,22 @@ class Triad
     }
 
     /**
+     * Checks whether this triad exists, i.e. has a valid controller class.
+     *
+     * @return bool `true` if the controller exists, `false` if not.
+     */
+    public function exists() : bool
+    {
+        $controller = $this->_components["controller"];
+
+        if($controller["component"] !== null) {
+            return true;
+        }
+
+        return class_exists($this->_prefix . $controller["name"]);
+    }
+
+    /**
      * Lazy-loads the components of the triad.
      *
      * All the components name are case insensitive.
@@ -167,13 +190,13 @@ class Triad
     {
         $name = strtolower($name);
 
-        if($name == "controller") {
+        if($name === "controller") {
             return $this->_loadController();
-        } else if($name == "presenter") {
+        } else if($name === "presenter") {
             return $this->_loadPresenter();
-        } else if($name == "model") {
+        } else if($name === "model") {
             return $this->_loadModel();
-        } else if($name == "view") {
+        } else if($name === "view") {
             return $this->_loadView();
         }
     }
@@ -181,7 +204,7 @@ class Triad
     /**
      * Loads and returns the controller.
      *
-     * @return \Alexya\Foundation\Controller The controller.
+     * @return Controller The controller.
      */
     protected function _loadController() : Controller
     {
@@ -191,7 +214,7 @@ class Triad
             return $controller["component"];
         }
 
-        $class = $this->_preffix . $controller["name"];
+        $class = $this->_prefix . $controller["name"];
         $controller = new $class($this, $this->_request);
 
         $this->_components["controller"]["component"] = $controller;
@@ -202,17 +225,17 @@ class Triad
     /**
      * Loads and returns the model.
      *
-     * @return \Alexya\Foundation\Model The model.
+     * @return Model The model.
      */
     protected function _loadModel() : Model
     {
         $model = $this->_components["model"];
 
-        if($model["component"] != null) {
+        if($model["component"] !== null) {
             return $model["component"];
         }
 
-        $class = $this->_preffix . $model["name"];
+        $class = $this->_prefix . $model["name"];
         $model = new $class($this, $this->_request);
 
         $this->_components["model"]["component"] = $model;
@@ -223,14 +246,14 @@ class Triad
     /**
      * Loads and returns the view.
      *
-     * @return \Alexya\Foundation\View The view.
+     * @return View The view.
      */
     protected function _loadView() : View
     {
         $settings = Container::Settings()->get("alexya.view");
         $view     = $this->_components["view"];
 
-        if($view["component"] != null) {
+        if($view["component"] !== null) {
             return $view["component"];
         }
 
@@ -239,8 +262,8 @@ class Triad
         foreach($settings["parsers"] as $extension => $class) {
             $view->parser($extension, $class);
         }
-        $view->setPath("{$this->_preffix}View\\{$this->_name}");
-        $view->setName("index.". $settings["default"]);
+        $view->setPath("{$this->_prefix}View\\{$this->_name}");
+        $view->setName("index");
 
         $this->_components["view"]["component"] = $view;
 
@@ -250,17 +273,17 @@ class Triad
     /**
      * Loads and returns the presenter.
      *
-     * @return \Alexya\Foundation\Presenter The presenter.
+     * @return Presenter The presenter.
      */
     protected function _loadPresenter() : Presenter
     {
         $presenter = $this->_components["presenter"];
 
-        if($presenter["component"] != null) {
+        if($presenter["component"] !== null) {
             return $presenter["component"];
         }
 
-        $class = $this->_preffix ."Presenter\\". $this->_name;
+        $class = $this->_prefix . $presenter["name"];
 
         if(
             !empty($presenter["name"]) &&
@@ -274,5 +297,57 @@ class Triad
         $this->_components["presenter"]["component"] = $presenter;
 
         return $presenter;
+    }
+
+    /**
+     * Checks that the triad has a valid model.
+     *
+     * @return bool `true` if the model for this triad exists, `false` if not.
+     */
+    public function hasModel() : bool
+    {
+        return (
+            $this->_components["model"]["component"] instanceof Model ||
+            class_exists($this->_prefix . $this->_components["model"]["name"])
+        );
+    }
+
+    /**
+     * Checks that the triad has a valid controller.
+     *
+     * @return bool `true` if the controller for this triad exists, `false` if not.
+     */
+    public function hasController() : bool
+    {
+        return (
+            $this->_components["controller"]["component"] instanceof Controller ||
+            class_exists($this->_prefix . $this->_components["controller"]["name"])
+        );
+    }
+
+    /**
+     * Checks that the triad has a valid presenter.
+     *
+     * @return bool `true` if the presenter for this triad exists, `false` if not.
+     */
+    public function hasPresenter() : bool
+    {
+        return (
+            $this->_components["presenter"]["component"] instanceof Presenter ||
+            class_exists($this->_prefix . $this->_components["presenter"]["name"])
+        );
+    }
+
+    /**
+     * Checks that the triad has a valid view.
+     *
+     * @return bool `true` if the view for this triad exists, `false` if not.
+     */
+    public function hasView() : bool
+    {
+        return (
+            $this->_components["view"]["component"] instanceof View ||
+            class_exists($this->_prefix . $this->_components["view"]["name"])
+        );
     }
 }

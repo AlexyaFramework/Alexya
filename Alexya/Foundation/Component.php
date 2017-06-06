@@ -15,22 +15,22 @@ abstract class Component
     /**
      * Triad reference.
      *
-     * @var \Alexya\Foundation\Triad
+     * @var Triad
      */
     protected $_triad;
 
     /**
      * Request reference.
      *
-     * @var \Alexya\Http\Request
+     * @var Request
      */
     protected $_request;
 
     /**
      * Constructor.
      *
-     * @param \Alexya\Foundation\Triad $triad   Triad reference.
-     * @param \Alexya\Http\Request     $request Request reference.
+     * @param Triad   $triad   Triad reference.
+     * @param Request $request Request reference.
      */
     public function __construct(Triad $triad, Request $request)
     {

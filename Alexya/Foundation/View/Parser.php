@@ -22,22 +22,22 @@ abstract class Parser
     /**
      * View data.
      *
-     * @var \Alexya\Tools\Collection
+     * @var Collection
      */
     protected $_data;
 
     /**
      * File object.
      *
-     * @var \Alexya\FileSystem\File
+     * @var File
      */
     protected $_file;
 
     /**
      * Constructor.
      *
-     * @param \Alexya\FileSystem\File  $file View file object.
-     * @param \Alexya\Tools\Collection $data View data.
+     * @param File       $file View file object.
+     * @param Collection $data View data.
      */
     public function __construct(File $file, Collection $data)
     {

@@ -2,6 +2,7 @@
 namespace Alexya\Foundation\View;
 
 use \Exception;
+use \Smarty;
 
 /**
  * The Smarty parser.
@@ -9,9 +10,11 @@ use \Exception;
  * This parser assumes that the file is a valid smarty template.
  *
  * This requires Smarty to be installed, execute `composer require smarty/smarty` or
- * add the followin require to `composer.json`:
+ * add the following require to `composer.json`:
  *
- *     "smarty/smarty": "^3.1"
+ * ```json
+ * "smarty/smarty": "^3.1"
+ * ```
  *
  * After that, execute `composer update` to install smarty.
  *
@@ -23,6 +26,8 @@ class SmartyParser extends Parser
      * Parses the view.
      *
      * @return string Parsed view.
+     *
+     * @throws Exception If Smarty isn't installed.
      */
     public function parse() : string
     {
@@ -30,7 +35,7 @@ class SmartyParser extends Parser
             throw new Exception("Smarty isn't installed, please, add the dependency to composer!");
         }
 
-        $smarty = new \Smarty();
+        $smarty = new Smarty();
 
         foreach($this->_data->getAll() as $key => $value) {
             $smarty->assign($key, $value);

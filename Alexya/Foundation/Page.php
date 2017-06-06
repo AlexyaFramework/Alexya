@@ -12,9 +12,9 @@ namespace Alexya\Foundation;
 class Page extends Triad
 {
     /**
-     * Namespace preffix.
-     * 
+     * Namespace prefix.
+     *
      * @var string
      */
-    protected $_preffix = "\\Application\\Page\\";
+    protected $_prefix = "\\Application\\Page\\";
 }

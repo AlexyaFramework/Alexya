@@ -7,27 +7,30 @@ use \Closure;
  * Container class
  *
  * Implements the Inversion of Control along with the
- * Dependency Injection desing pattern.
- *
- * You can use this class for insancing objects with automatic dependency injection.
+ * Dependency Injection design pattern.
+ * You can use this class for instancing objects with automatic dependency injection.
  *
  * First you need to register the bind. You can do so with the `register` method:
  *
- *     Container::register("User", function($name, $password) {
- *         $user = new User($name, $password);
+ * ```php
+ * Container::register("User", function($name, $password) {
+ *     $user = new User($name, $password);
  *
- *         return $user;
- *     });
+ *     return $user;
+ * });
+ *```
  *
  * Alternatively, if you want the returned object to be instanced just once,
  * so there's only one instance of the object, use the method `registerSingleton`:
  *
- *     Container::registerSingleton("Database", function() {
- *     	   $settings = [];
- *         $database = new Database($settings);
+ * ```php
+ * Container::registerSingleton("Database", function() {
+ *     $settings = [];
+ *     $database = new Database($settings);
  *
- *         return $database;
- *     });
+ *     return $database;
+ * });
+ * ```
  *
  * Both methods accepts 2 parameters:
  *  * A string being the name to reference the bindnig.
@@ -35,12 +38,16 @@ use \Closure;
  *
  * Once the binding has been registered you can retrieve it using the method `get`:
  *
- *     $user     = Container::get("User", ["test", "test"]);
- *     $database = Container::get("Database");
+ * ```php
+ * $user     = Container::get("User", ["test", "test"]);
+ * $database = Container::get("Database");
+ * ```
  *
  * Alternatively you can take advantage of the `__callStatic` method for retrieving bindings:
  *
- *     $user = Container::User("test", "test");
+ * ```php
+ * $user = Container::User("test", "test");
+ * ```
  *
  * The parameter it accepts is the string sent to the `register` or `registerSingleton` method
  * to identify the binding. You can send an array containing the parameters that will be sent to the closure.
@@ -49,6 +56,13 @@ use \Closure;
  * way as the `get` method. It will return `true` if the binding is registered or `false` if not.
  *
  * To unregister a binding use the method `unregister` which accepts as parameter the name of the binding.
+ *
+ * @method static Logger\AbstractLogger   Logger     Returns the logger object.
+ * @method static Database\Connection     Database   Returns the Database connection.
+ * @method static Settings                Settings   Returns the Settings object.
+ * @method static Router\Router           Router     Returns the Router object.
+ * @method static Tools\Session\Session   Session    Returns the Session object.
+ * @method static Localization\Translator Translator Returns the Translator object.
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -62,7 +76,7 @@ class Container
     private static $_bindings = [];
 
     /**
-     * Checks wether a binding has been registered or not.
+     * Checks whether a binding has been registered or not.
      *
      * @param string $name Binding's name.
      *
@@ -80,13 +94,13 @@ class Container
      */
     public static function unregister(string $name)
     {
-        unset(self::$_bindings);
+        unset(self::$_bindings[$name]);
     }
 
     /**
      * Registers a binding.
      *
-     * If `$name` is already registered it will be overriden.
+     * If `$name` is already registered it will be overridden.
      *
      * @param string  $name    Binding's name.
      * @param Closure $closure Closure to execute to instance the binding.
@@ -94,7 +108,7 @@ class Container
     public static function register(string $name, Closure $closure)
     {
         self::$_bindings[$name] = [
-            "type"    => "multiton",
+            "type"    => "nonSingleton",
             "closure" => $closure
         ];
     }
@@ -132,22 +146,21 @@ class Container
 
         $binding = self::$_bindings[$name];
 
-        if($binding["type"] != "singleton") {
+        if($binding["type"] !== "singleton") {
             return $binding["closure"](... $args);
         }
 
-        if($binding["isExecuted"]) {
-            $binding = $binding["closure"];
-        } else {
+        $result = $binding["closure"];
+        if(!$binding["isExecuted"]) {
             $binding["isExecuted"] = true;
             $binding["closure"]    = $binding["closure"](... $args);
 
             self::$_bindings[$name] = $binding;
 
-            $binding = $binding["closure"];
+            $result = $binding["closure"];
         }
 
-        return $binding;
+        return $result;
     }
 
     /**
@@ -155,14 +168,16 @@ class Container
      *
      * Example:
      *
-     *     Container::Router(); // Same as `Container::get("Router")`
+     * ```php
+     * Container::Router(); // Same as `Container::get("Router")`
+     * ```
      *
      * @param string $name Binding's name.
      * @param array  $args Arguments sent to the binding.
      *
      * @return mixed The result of calling binding's closure.
      *
-     * @see \Alexya\Container::get
+     * @see Container::get
      */
     public static function __callStatic(string $name, array $args)
     {
